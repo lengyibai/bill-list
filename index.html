@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>冷弋白的网页</title>
+    <title>借款记录</title>
     <style>
       * {
         margin: 0;
@@ -34,11 +34,11 @@
           .year {
             position: sticky;
             top: 0;
-            font-size: 40px;
+            font-size: 34px;
             background-color: #fff;
             padding: 10px;
             font-weight: bold;
-          border-bottom: 2px solid #eee;
+            border-bottom: 2px solid #eee;
 
             &:not(:first-child) {
               margin-top: 20px;
@@ -53,16 +53,16 @@
               display: flex;
               justify-content: space-between;
               align-items: center;
-              padding: 20px 10px 20px;
+              padding: 10px;
 
               .left {
                 display: flex;
                 align-items: center;
 
                 .icon {
-                  width: 60px;
-                  height: 60px;
-                  margin-right: 16px;
+                  width: 50px;
+                  height: 50px;
+                  margin-right: 10px;
                 }
 
                 .info {
@@ -71,12 +71,11 @@
 
                   .time {
                     color: #999;
-                    font-size: 18px;
-                    margin-bottom: 6px;
+                    font-size: 16px;
                   }
 
                   .money {
-                    font-size: 24px;
+                    font-size: 20px;
                     font-weight: bold;
                     &.add {
                       color: red;
@@ -91,14 +90,15 @@
               .right {
                 display: flex;
                 flex-direction: column;
+
                 .desc {
+                  color: #999;
                   text-align: right;
-                  font-size: 18px;
-                  margin-bottom: 6px;
+                  font-size: 16px;
                 }
 
                 .after {
-                  font-size: 26px;
+                  font-size: 20px;
                   font-weight: bold;
                   text-align: right;
                 }
@@ -1461,7 +1461,7 @@
         const data = item.data;
         const yearDom = document.createElement("div");
         yearDom.className = "year";
-        yearDom.innerHTML = year;
+        yearDom.innerHTML = year + "年";
         billList.appendChild(yearDom);
 
         const yearBillListDom = document.createElement("div");
@@ -1479,14 +1479,14 @@
             <div class="info">
               <div class="time">${time}</div>
               <div class="money ${type.toLowerCase()}">
-              ￥${money.toFixed(2)}
+            ${type === "SUB" ? "-" : "+"}${money}
               </div>
             </div>
           </div>
           <div class="right">
             <div class="desc">变动后欠款</div>
             <div class="after">
-            ${getTotal(money, type)}￥
+            ${getTotal(money, type)}
             </div>
           </div>
           `;
