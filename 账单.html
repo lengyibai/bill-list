@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>冷弋白的网页</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+      }
+
+      html,
+      body,
+      #app {
+        position: relative;
+        overflow: hidden;
+        width: 100%;
+        height: 100%;
+      }
+
+      #app {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        overflow: auto;
+
+        .bill-list {
+          display: flex;
+          flex-direction: column;
+
+          .year {
+            position: sticky;
+            top: 0;
+            font-size: 40px;
+            background-color: #f7f7f7;
+            padding: 10px;
+          }
+
+          .year-bill-list {
+            display: flex;
+            flex-direction: column;
+
+            .card {
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              padding: 20px 10px 20px;
+
+              &.weixin {
+                background-color: rgba(42, 174, 104, 0.25);
+              }
+              &.zhifubao {
+                background-color: rgba(4, 151, 225, 0.25);
+              }
+
+              .left {
+                display: flex;
+                flex-direction: column;
+                .time {
+                  color: #aaa;
+                }
+
+                .money {
+                  font-size: 26px;
+                  font-weight: bold;
+                  &.add {
+                    color: red;
+                  }
+                  &.sub {
+                    color: green;
+                  }
+                }
+              }
+
+              .right {
+                display: flex;
+                flex-direction: column;
+                .desc {
+                  text-align: right;
+                }
+
+                .after {
+                  font-size: 26px;
+                }
+              }
+            }
+          }
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="app">
+      <div class="bill-list"></div>
+    </div>
+
+    <script src="./decimal.js"></script>
+    <script>
+      const _decimal = (nums, operators, point = 2) => {
+        //检查数字数量与运算符数量是否匹配
+        if (nums.length !== operators.length + 1) {
+          throw new Error("数字数量与符号数量不匹配，符号数量＝数字数量-1");
+        }
+
+        //初始化结果为第一个数字
+        let result = new Decimal(nums[0]);
+
+        //定义计算函数对象，包含加减乘除四则运算
+        const calc = {
+          "+": (a, b) => a.add(b),
+          "-": (a, b) => a.sub(b),
+          "*": (a, b) => a.mul(b),
+          "/": (a, b) => {
+            //检查除数是否为0
+            if (b.eq(0)) {
+              throw new Error("除数不能为0");
+            }
+            return a.div(b);
+          },
+        };
+
+        //循环计算每个运算符对应的数字
+        for (let i = 0; i < operators.length; i++) {
+          const operand = new Decimal(nums[i + 1]); //获取下一个数字作为操作数
+          const operator = operators[i]; //获取当前运算符
+          result = calc[operator](result, operand); //使用对应的计算函数进行计算
+        }
+
+        return Number(result.toFixed(point));
+      };
+
+      const data = [
+        {
+          year: "2019",
+          data: [
+            {
+              platform: "weixin",
+              time: "09-18 14:50",
+              type: "SUB",
+              money: 100,
+            },
+            {
+              platform: "weixin",
+              time: "10-21 18:38",
+              type: "SUB",
+              money: 100,
+            },
+            {
+              platform: "weixin",
+              time: "11-07 20:04",
+              type: "ADD",
+              money: 6.27,
+            },
+          ],
+        },
+        {
+          year: "2020",
+          data: [
+            {
+              platform: "weixin",
+              time: "05-14 21:10",
+              type: "ADD",
+              money: 400,
+            },
+            {
+              platform: "weixin",
+              time: "09-20 17:41",
+              type: "ADD",
+              money: 150,
+            },
+            {
+              platform: "weixin",
+              time: "09-20 17:42",
+              type: "SUB",
+              money: 150,
+            },
+            {
+              platform: "weixin",
+              time: "10-09 11:59",
+              type: "SUB",
+              money: 100,
+            },
+            {
+              platform: "weixin",
+              time: "10-10 08:43",
+              type: "SUB",
+              money: 200,
+            },
+            {
+              platform: "weixin",
+              time: "11-14 20:28",
+              type: "SUB",
+              money: 20,
+            },
+            {
+              platform: "zhifubao",
+              time: "11-15 12:45",
+              type: "SUB",
+              money: 999.79,
+            },
+            {
+              platform: "weixin",
+              time: "11-15 13:24",
+              type: "SUB",
+              money: 500,
+            },
+            {
+              platform: "weixin",
+              time: "11-15 16:51",
+              type: "ADD",
+              money: 320,
+            },
+            {
+              platform: "weixin",
+              time: "11-17 10:57",
+              type: "SUB",
+              money: 169,
+            },
+            {
+              platform: "weixin",
+              time: "11-17 13:30",
+              type: "SUB",
+              money: 100,
+            },
+            {
+              platform: "weixin",
+              time: "11-20 16:18",
+              type: "SUB",
+              money: 169,
+            },
+            {
+              platform: "weixin",
+              time: "11-21 20:21",
+              type: "ADD",
+              money: 40,
+            },
+            {
+              platform: "zhifubao",
+              time: "11-22 21:32",
+              type: "SUB",
+              money: 500,
+            },
+            {
+              platform: "weixin",
+              time: "11-24 12:46",
+              type: "ADD",
+              money: 169,
+            },
+            {
+              platform: "weixin",
+              time: "11-26 18:20",
+              type: "ADD",
+              money: 169,
+            },
+            {
+              platform: "zhifubao",
+              time: "11-29 11:37",
+              type: "SUB",
+              money: 500,
+            },
+            {
+              platform: "weixin",
+              time: "12-06 23:21",
+              type: "SUB",
+              money: 500,
+            },
+            {
+              platform: "weixin",
+              time: "12-14 14:13",
+              type: "SUB",
+              money: 29.4,
+            },
+            {
+              platform: "weixin",
+              time: "12-16 19:50",
+              type: "SUB",
+              money: 33.13,
+            },
+            {
+              platform: "weixin",
+              time: "12-23 12:56",
+              type: "ADD",
+              money: 29.21,
+            },
+            {
+              platform: "weixin",
+              time: "12-28 17:52",
+              type: "ADD",
+              money: 210,
+            },
+            {
+              platform: "weixin",
+              time: "12-28 17:52",
+              type: "SUB",
+              money: 20,
+            },
+            {
+              platform: "weixin",
+              time: "12-28 18:16",
+              type: "ADD",
+              money: 50,
+            },
+          ],
+        },
+        {
+          year: "2021",
+          data: [
+            {
+              platform: "weixin",
+              time: "01-07 15:32",
+              type: "SUB",
+              money: 75.66,
+            },
+            {
+              platform: "weixin",
+              time: "01-07 17:48",
+              type: "SUB",
+              money: 50,
+            },
+            {
+              platform: "zhifubao",
+              time: "01-08 23:44",
+              type: "SUB",
+              money: 300,
+            },
+            {
+              platform: "weixin",
+              time: "01-12 11:10",
+              type: "ADD",
+              money: 100,
+            },
+            {
+              platform: "zhifubao",
+              time: "01-16 12:43",
+              type: "SUB",
+              money: 500,
+            },
+            {
+              platform: "weixin",
+              time: "01-20 18:59",
+              type: "SUB",
+              money: 30,
+            },
+            {
+              platform: "weixin",
+              time: "01-22 19:05",
+              type: "SUB",
+              money: 927.59,
+            },
+            {
+              platform: "weixin",
+              time: "01-22 14:06",
+              type: "SUB",
+              money: 2,
+            },
+            {
+              platform: "weixin",
+              time: "01-22 15:43",
+              type: "SUB",
+              money: 2,
+            },
+            {
+              platform: "weixin",
+              time: "05-05 18:05",
+              type: "SUB",
+              money: 200,
+            },
+            {
+              platform: "weixin",
+              time: "05-06 23:08",
+              type: "SUB",
+              money: 200,
+            },
+            {
+              platform: "weixin",
+              time: "05-06 23:08",
+              type: "ADD",
+              money: 200,
+            },
+            {
+              platform: "weixin",
+              time: "05-22 19:40",
+              type: "ADD",
+              money: 6,
+            },
+            {
+              platform: "weixin",
+              time: "06-21 01:02",
+              type: "ADD",
+              money: 200,
+            },
+            {
+              platform: "weixin",
+              time: "01-18 10:42",
+              type: "ADD",
+              money: 300,
+            },
+            {
+              platform: "weixin",
+              time: "08-19 11:32",
+              type: "ADD",
+              money: 200,
+            },
+            {
+              platform: "weixin",
+              time: "09-20 11:36",
+              type: "ADD",
+              money: 100,
+            },
+            {
+              platform: "weixin",
+              time: "10-20 19:05",
+              type: "ADD",
+              money: 200,
+            },
+            {
+              platform: "weixin",
+              time: "11-23 20:48",
+              type: "SUB",
+              money: 1000,
+            },
+            {
+              platform: "weixin",
+              time: "12-08 22:09",
+              type: "SUB",
+              money: 1800,
+            },
+            {
+              platform: "zhifubao",
+              time: "12-22 14:29",
+              type: "SUB",
+              money: 1474.87,
+            },
+            {
+              platform: "weixin",
+              time: "12-22 14:34",
+              type: "SUB",
+              money: 1025.13,
+            },
+          ],
+        },
+        {
+          year: "2022",
+          data: [
+            {
+              platform: "weixin",
+              time: "01-21 20:06",
+              type: "SUB",
+              money: 200,
+            },
+            {
+              platform: "zhifubao",
+              time: "01-21 20:29",
+              type: "SUB",
+              money: 1200,
+            },
+            {
+              platform: "weixin",
+              time: "01-21 20:34",
+              type: "SUB",
+              money: 600,
+            },
+            {
+              platform: "weixin",
+              time: "03-07 14:09",
+              type: "SUB",
+              money: 50,
+            },
+            {
+              platform: "weixin",
+              time: "05-10 13:41",
+              type: "ADD",
+              money: 2000,
+            },
+            {
+              platform: "weixin",
+              time: "06-05 13:34",
+              type: "ADD",
+              money: 1000,
+            },
+            {
+              platform: "weixin",
+              time: "07-23 21:11",
+              type: "SUB",
+              money: 500,
+            },
+            {
+              platform: "weixin",
+              time: "08-04 18:12",
+              type: "SUB",
+              money: 200,
+            },
+            {
+              platform: "weixin",
+              time: "08-09 02:25",
+              type: "SUB",
+              money: 1300,
+            },
+            {
+              platform: "weixin",
+              time: "08-17 10:54",
+              type: "ADD",
+              money: 100,
+            },
+            {
+              platform: "weixin",
+              time: "08-28 16:30",
+              type: "SUB",
+              money: 100,
+            },
+            {
+              platform: "weixin",
+              time: "09-11 20:04",
+              type: "SUB",
+              money: 500,
+            },
+          ],
+        },
+        {
+          year: "2023",
+          data: [
+            {
+              platform: "weixin",
+              time: "01-23 16:05",
+              type: "ADD",
+              money: 500,
+            },
+            {
+              platform: "weixin",
+              time: "01-28 14:46",
+              type: "ADD",
+              money: 2500,
+            },
+            {
+              platform: "weixin",
+              time: "01-28 16:15",
+              type: "SUB",
+              money: 1500,
+            },
+            {
+              platform: "weixin",
+              time: "04-14 14:48",
+              type: "SUB",
+              money: 1367.68,
+            },
+            {
+              platform: "weixin",
+              time: "04-14 14:49",
+              type: "SUB",
+              money: 132.32,
+            },
+            {
+              platform: "weixin",
+              time: "04-18 12:14",
+              type: "SUB",
+              money: 600,
+            },
+            {
+              platform: "weixin",
+              time: "04-27 14:55",
+              type: "SUB",
+              money: 200,
+            },
+            {
+              platform: "weixin",
+              time: "05-06 22:22",
+              type: "SUB",
+              money: 800,
+            },
+            {
+              platform: "weixin",
+              time: "05-13 18:02",
+              type: "SUB",
+              money: 1910,
+            },
+            {
+              platform: "weixin",
+              time: "05-24 20:32",
+              type: "SUB",
+              money: 490,
+            },
+            {
+              platform: "weixin",
+              time: "06-05 14:39",
+              type: "SUB",
+              money: 3000,
+            },
+            {
+              platform: "weixin",
+              time: "10-20 09:01",
+              type: "ADD",
+              money: 500,
+            },
+            {
+              platform: "weixin",
+              time: "11-23 11:50",
+              type: "ADD",
+              money: 200,
+            },
+            {
+              platform: "weixin",
+              time: "12-11 10:44",
+              type: "ADD",
+              money: 300,
+            },
+          ],
+        },
+        {
+          year: "2024",
+          data: [
+            {
+              platform: "weixin",
+              time: "01-16 19:35",
+              type: "ADD",
+              money: 300,
+            },
+            {
+              platform: "weixin",
+              time: "02-16 11:42",
+              type: "SUB",
+              money: 3000,
+            },
+            {
+              platform: "weixin",
+              time: "02-19 15:38",
+              type: "SUB",
+              money: 500,
+            },
+            {
+              platform: "weixin",
+              time: "02-20 16:29",
+              type: "ADD",
+              money: 700,
+            },
+            {
+              platform: "weixin",
+              time: "06-16 23:10",
+              type: "ADD",
+              money: 100,
+            },
+            {
+              platform: "weixin",
+              time: "08-02 12:29",
+              type: "ADD",
+              money: 100,
+            },
+            {
+              platform: "weixin",
+              time: "11-20 16:16",
+              type: "ADD",
+              money: 100,
+            },
+            {
+              platform: "weixin",
+              time: "12-21 17:22",
+              type: "ADD",
+              money: 200,
+            },
+          ],
+        },
+      ];
+
+      let total = 0;
+      const getTotal = (money, type) => {
+        total = _decimal([total, money], [type === "ADD" ? "+" : "-"], 2);
+        return total;
+      };
+      const billList = document.querySelector(".bill-list");
+      data.forEach((item) => {
+        const year = item.year;
+        const data = item.data;
+        const yearDom = document.createElement("div");
+        yearDom.className = "year";
+        yearDom.innerHTML = year;
+        billList.appendChild(yearDom);
+
+        const yearBillListDom = document.createElement("div");
+        yearBillListDom.className = "year-bill-list";
+        billList.appendChild(yearBillListDom);
+        data.forEach((item) => {
+          const time = item.time;
+          const type = item.type;
+          const money = item.money;
+          const itemDom = document.createElement("div");
+          itemDom.className = "card " + item.platform;
+          itemDom.innerHTML = `
+        <div class="left">
+            <div class="time">${time}</div>
+            <div class="money ${type.toLowerCase()}">
+            ${type === "SUB" ? "借" : "还"}${money}
+            </div>
+          </div>
+          <div class="right">
+            <div class="desc">变动后欠款</div>
+            <div class="after">
+            ${getTotal(money, type)}
+            </div>
+          </div>
+          `;
+          yearBillListDom.appendChild(itemDom);
+        });
+      });
+    </script>
+  </body>
+</html>
