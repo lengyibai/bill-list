@@ -27,6 +27,7 @@
         overflow: auto;
 
         .bill-list {
+          position: relative;
           display: flex;
           flex-direction: column;
 
@@ -34,8 +35,14 @@
             position: sticky;
             top: 0;
             font-size: 40px;
-            background-color: #f7f7f7;
+            background-color: #fff;
             padding: 10px;
+            font-weight: bold;
+          border-bottom: 2px solid #eee;
+
+            &:not(:first-child) {
+              margin-top: 20px;
+            }
           }
 
           .year-bill-list {
@@ -48,28 +55,35 @@
               align-items: center;
               padding: 20px 10px 20px;
 
-              &.weixin {
-                background-color: rgba(42, 174, 104, 0.25);
-              }
-              &.zhifubao {
-                background-color: rgba(4, 151, 225, 0.25);
-              }
-
               .left {
                 display: flex;
-                flex-direction: column;
-                .time {
-                  color: #aaa;
+                align-items: center;
+
+                .icon {
+                  width: 60px;
+                  height: 60px;
+                  margin-right: 16px;
                 }
 
-                .money {
-                  font-size: 26px;
-                  font-weight: bold;
-                  &.add {
-                    color: red;
+                .info {
+                  display: flex;
+                  flex-direction: column;
+
+                  .time {
+                    color: #999;
+                    font-size: 18px;
+                    margin-bottom: 6px;
                   }
-                  &.sub {
-                    color: green;
+
+                  .money {
+                    font-size: 24px;
+                    font-weight: bold;
+                    &.add {
+                      color: red;
+                    }
+                    &.sub {
+                      color: green;
+                    }
                   }
                 }
               }
@@ -79,10 +93,14 @@
                 flex-direction: column;
                 .desc {
                   text-align: right;
+                  font-size: 18px;
+                  margin-bottom: 6px;
                 }
 
                 .after {
                   font-size: 26px;
+                  font-weight: bold;
+                  text-align: right;
                 }
               }
             }
@@ -1236,7 +1254,7 @@
               platform: "zhifubao",
               time: "10-06 14:08",
               type: "ADD",
-              money:500 ,
+              money: 500,
             },
             {
               platform: "weixin",
@@ -1435,7 +1453,7 @@
       let total = 0;
       const getTotal = (money, type) => {
         total = _decimal([total, money], [type === "ADD" ? "+" : "-"], 2);
-        return total;
+        return total.toFixed(2);
       };
       const billList = document.querySelector(".bill-list");
       data.forEach((item) => {
@@ -1454,18 +1472,21 @@
           const type = item.type;
           const money = item.money;
           const itemDom = document.createElement("div");
-          itemDom.className = "card " + item.platform;
+          itemDom.className = "card";
           itemDom.innerHTML = `
         <div class="left">
-            <div class="time">${time}</div>
-            <div class="money ${type.toLowerCase()}">
-            ${type === "SUB" ? "借" : "还"}${money}
+            <img class="icon" src="${item.platform}.png" />
+            <div class="info">
+              <div class="time">${time}</div>
+              <div class="money ${type.toLowerCase()}">
+              ￥${money.toFixed(2)}
+              </div>
             </div>
           </div>
           <div class="right">
             <div class="desc">变动后欠款</div>
             <div class="after">
-            ${getTotal(money, type)}
+            ${getTotal(money, type)}￥
             </div>
           </div>
           `;
